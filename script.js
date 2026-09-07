@@ -19,6 +19,98 @@
   let isDefault = true;
   [weightInput, ageYears, ageMonths].forEach(el => el.addEventListener('input', () => { isDefault = false; render(); }));
 
+  // ---------- install as an app (Add to Home Screen) ----------
+  (function setupInstall(){
+    const banner = document.getElementById('installBanner');
+    const installBtn = document.getElementById('installBtn');
+    const dismissBtn = document.getElementById('installDismiss');
+    const modalBackdrop = document.getElementById('installModalBackdrop');
+    const modalClose = document.getElementById('installModalClose');
+    const stepsList = document.getElementById('installSteps');
+    if (!banner || !installBtn) return;
+
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    if (isStandalone){
+      return; // already installed, nothing to prompt
+    }
+    if (sessionStorage.getItem('installBannerDismissed') === '1'){
+      return; // person already said no thanks this session
+    }
+
+    const ua = navigator.userAgent || '';
+    const isIOS = /iphone|ipad|ipod/i.test(ua) && !window.MSStream;
+    const isAndroid = /android/i.test(ua);
+
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      banner.hidden = false;
+    });
+
+    // iOS never fires beforeinstallprompt, so show the banner right away
+    // with manual steps instead of waiting for a browser event that won't come.
+    if (isIOS){
+      banner.hidden = false;
+    }
+
+    function stepsFor(){
+      if (isIOS){
+        return [
+          'Tap the Share icon (the square with an arrow pointing up) in Safari’s toolbar.',
+          'Scroll down and tap "Add to Home Screen."',
+          'Tap "Add" in the top right corner.'
+        ];
+      }
+      if (isAndroid){
+        return [
+          'Tap the menu icon (⋮) in the top right of Chrome.',
+          'Tap "Add to Home screen" or "Install app."',
+          'Tap "Add" or "Install" to confirm.'
+        ];
+      }
+      return [
+        'Open this page on your phone.',
+        'In Safari or Chrome, look for "Add to Home Screen" or "Install" in the share or browser menu.',
+        'Confirm, and the icon will appear on your home screen.'
+      ];
+    }
+
+    function openInstructions(){
+      stepsList.innerHTML = stepsFor().map(s => '<li>' + s + '</li>').join('');
+      modalBackdrop.hidden = false;
+    }
+
+    installBtn.addEventListener('click', async () => {
+      if (deferredPrompt){
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        banner.hidden = true;
+      } else {
+        openInstructions();
+      }
+    });
+
+    dismissBtn.addEventListener('click', () => {
+      banner.hidden = true;
+      sessionStorage.setItem('installBannerDismissed', '1');
+    });
+
+    modalClose.addEventListener('click', () => { modalBackdrop.hidden = true; });
+    modalBackdrop.addEventListener('click', (e) => {
+      if (e.target === modalBackdrop) modalBackdrop.hidden = true;
+    });
+  })();
+
+  if ('serviceWorker' in navigator){
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {
+        // offline install still works without this; it just won't cache for offline use
+      });
+    });
+  }
+
   // ---------- helpers ----------
   function round(n, dp){
     const f = Math.pow(10, dp);

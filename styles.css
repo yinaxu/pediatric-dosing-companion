@@ -1,12 +1,13 @@
 /* ==========================================================================
-   Pediatric Dosing Companion — Style Guide
+   Pediatric Dosing Companion. Style Guide.
    A standalone stylesheet for the dosing calculator. Organized as:
      1. Design tokens (light / dark)
      2. Base & typography
      3. Header
+     3b. Install banner and "Add to Home Screen" modal
      4. Disclaimer banner
      5. Patient input panel
-     6. "Jump to what you need" picker
+     6. "See what you need" picker
      7. Section headers
      8. Drug cards
      9. Footer
@@ -122,6 +123,47 @@ h1,h2,h3{
 }
 .masthead h1{ font-size:clamp(26px,4vw,34px); }
 .masthead p.sub{ color:var(--ink-soft); font-size:14.5px; margin-top:6px; max-width:60ch; }
+
+/* --------------------------------------------------------------------------
+   3b. Install banner and "Add to Home Screen" instructions modal
+   -------------------------------------------------------------------------- */
+.install-banner{
+  display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+  background:var(--accent-soft); border:1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+  border-radius:12px; padding:14px 16px; margin-bottom:26px; font-size:13.5px; color:var(--ink);
+}
+.install-banner[hidden]{ display:none; }
+.install-banner-text strong{ color:var(--accent); }
+.install-banner-actions{ display:flex; align-items:center; gap:10px; flex:none; }
+.install-btn{
+  border:none; background:var(--accent); color:var(--accent-ink); font-weight:600; font-size:13.5px;
+  padding:9px 16px; border-radius:8px; cursor:pointer; font-family:"Public Sans",sans-serif; white-space:nowrap;
+}
+.install-btn:hover{ filter:brightness(1.08); }
+.install-dismiss{
+  border:none; background:none; color:var(--ink-soft); cursor:pointer; font-size:16px; line-height:1;
+  padding:4px; border-radius:6px;
+}
+.install-dismiss:hover{ color:var(--ink); }
+
+.install-modal-backdrop{
+  position:fixed; inset:0; background:rgba(20,24,21,0.5); display:flex; align-items:center;
+  justify-content:center; padding:20px; z-index:100;
+}
+.install-modal-backdrop[hidden]{ display:none; }
+.install-modal{
+  background:var(--surface); border-radius:16px; padding:26px; max-width:380px; width:100%;
+  box-shadow:0 20px 60px -20px rgba(0,0,0,0.4);
+}
+.install-modal h3{ font-size:20px; margin-bottom:14px; }
+.install-modal ol{ margin:0 0 20px; padding-left:22px; color:var(--ink); font-size:14.5px; line-height:1.7; }
+.install-modal ol li{ margin-bottom:8px; }
+.install-modal ol li:last-child{ margin-bottom:0; }
+.install-modal-close{
+  border:none; background:var(--accent); color:var(--accent-ink); font-weight:600; font-size:14px;
+  padding:10px 18px; border-radius:8px; cursor:pointer; width:100%; font-family:"Public Sans",sans-serif;
+}
+.install-modal-close:hover{ filter:brightness(1.08); }
 
 /* --------------------------------------------------------------------------
    4. Disclaimer banner
