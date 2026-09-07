@@ -20,6 +20,9 @@
   [weightInput, ageYears, ageMonths].forEach(el => el.addEventListener('input', () => { isDefault = false; render(); }));
 
   // ---------- install as an app (Add to Home Screen) ----------
+  // Wrapped in try/catch and guarded on every element: this feature must
+  // never be able to block the calculator below from rendering.
+  try {
   (function setupInstall(){
     const banner = document.getElementById('installBanner');
     const installBtn = document.getElementById('installBtn');
@@ -27,7 +30,7 @@
     const modalBackdrop = document.getElementById('installModalBackdrop');
     const modalClose = document.getElementById('installModalClose');
     const stepsList = document.getElementById('installSteps');
-    if (!banner || !installBtn) return;
+    if (!banner || !installBtn || !dismissBtn || !modalBackdrop || !modalClose || !stepsList) return;
 
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
     if (isStandalone){
@@ -102,6 +105,9 @@
       if (e.target === modalBackdrop) modalBackdrop.hidden = true;
     });
   })();
+  } catch (err) {
+    // Never let the install-banner feature take the whole page down.
+  }
 
   if ('serviceWorker' in navigator){
     window.addEventListener('load', () => {

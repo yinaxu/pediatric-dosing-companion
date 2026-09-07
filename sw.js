@@ -1,7 +1,7 @@
 /* Pediatric Dosing Companion. Service worker for offline install.
    Bump CACHE_NAME any time index.html, styles.css, or script.js changes,
    so returning visitors pick up the new version instead of a stale cache. */
-const CACHE_NAME = 'dosing-companion-v1';
+const CACHE_NAME = 'dosing-companion-v2';
 const CORE_FILES = [
   './',
   './index.html',
