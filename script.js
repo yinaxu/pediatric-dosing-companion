@@ -944,6 +944,7 @@
         : '<p class="selection-empty">Every medication in this group is in your selection above.</p>';
     }
   }
-
+<script data-goatcounter="https://yinaxu.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
   render();
 })();

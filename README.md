@@ -45,18 +45,3 @@ Nothing needs to be downloaded from an app store. This all comes from the same f
 
 This is a quick reference and a second check on your own calculation. It doesn't replace professional judgment. Confirm every dose against a current drug reference and against the specific patient's health history, allergies, and the reason they're being treated before giving it.
 
-## The "Try it now" button
-
-The green button at the top of this page is a markdown link styled to look like a button, and it already points to your live site:
-
-```
-[![Try it now](https://img.shields.io/badge/Try%20it%20now-Live%20Demo-0F6E5E?style=for-the-badge)](https://yinaxu.github.io/pediatric-dosing-companion/)
-```
-
-The part in the second set of parentheses is the actual destination. If you ever rename the repo or move the site somewhere else, that's the only piece you need to update, then push the change (`git add README.md`, `git commit -m "update live demo link"`, `git push`) and GitHub will refresh the button right away.
-
-If you'd rather have a plain text link instead of a colored button, you can swap the whole line for something simpler:
-```
-[Try it now](https://yinaxu.github.io/pediatric-dosing-companion/)
-```
-Same idea, just without the badge styling.
