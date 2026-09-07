@@ -105,6 +105,26 @@ h1,h2,h3{
 .wrap{ max-width:960px; margin:0 auto; padding:32px 20px 80px; }
 
 /* --------------------------------------------------------------------------
+   2b. Info tooltips
+   A small hover/focus target that keeps longer explanations out of the way
+   until someone actually wants them.
+   -------------------------------------------------------------------------- */
+.info-tip{
+  position:relative; display:inline-flex; align-items:center; justify-content:center;
+  width:16px; height:16px; border-radius:50%; border:none; padding:0; flex:none;
+  background:var(--border); color:var(--ink-soft); font-family:"Public Sans",sans-serif;
+  font-size:11px; font-weight:700; line-height:1; cursor:help; vertical-align:middle;
+}
+.info-tip:hover, .info-tip:focus{ background:var(--accent); color:var(--accent-ink); outline:none; }
+.info-tip-text{
+  position:absolute; left:0; top:calc(100% + 8px); z-index:20; display:none;
+  width:250px; max-width:70vw; background:var(--ink); color:var(--bg); font-weight:400;
+  font-size:12.5px; line-height:1.5; padding:10px 12px; border-radius:8px; text-align:left;
+  box-shadow:var(--shadow); text-transform:none; letter-spacing:normal;
+}
+.info-tip:hover .info-tip-text, .info-tip:focus .info-tip-text{ display:block; }
+
+/* --------------------------------------------------------------------------
    3. Header
    -------------------------------------------------------------------------- */
 .masthead{
@@ -183,7 +203,7 @@ h1,h2,h3{
   background:var(--surface); border:1px solid var(--border); border-radius:14px;
   padding:22px; box-shadow:var(--shadow); margin-bottom:30px;
 }
-.panel h2{ font-size:19px; margin-bottom:4px; }
+.panel h2{ display:flex; align-items:center; gap:7px; font-size:19px; margin-bottom:18px; }
 .panel .hint{ color:var(--ink-soft); font-size:13px; margin-bottom:18px; }
 .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
 @media (max-width:560px){ .field-row{ grid-template-columns:1fr; } }
@@ -231,8 +251,8 @@ h1,h2,h3{
    6. "See what you need" picker
    -------------------------------------------------------------------------- */
 .filter-panel{ padding:18px 22px; }
-.filter-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px; }
-.filter-head h2{ font-size:17px; }
+.filter-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.filter-head h2{ display:flex; align-items:center; gap:7px; font-size:17px; }
 .filter-reset{
   border:none; background:none; color:var(--accent); font-weight:600; font-size:13px;
   cursor:pointer; padding:2px 4px; font-family:"Public Sans",sans-serif;
@@ -299,6 +319,57 @@ h1,h2,h3{
 }
 .class-tag.abx{ background:var(--accent-soft); color:var(--accent); }
 .class-tag.otc{ background:var(--amber-soft); color:var(--amber); }
+.class-tag.rx{ background:var(--accent-soft); color:var(--accent); }
+.class-tag.controlled{ background:var(--danger-soft); color:var(--danger); }
+
+/* Per-card controls: pick the tier / frequency / stocked concentration to
+   show, so the card can stay down to one line of the actual answer. */
+.card-controls{ display:flex; flex-direction:column; gap:7px; }
+.control-row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.control-label{
+  font-size:10.5px; font-weight:600; letter-spacing:.05em; text-transform:uppercase;
+  color:var(--ink-soft); flex:none;
+}
+.pill-toggle{ display:flex; flex-wrap:wrap; gap:6px; }
+.pill-toggle button{
+  border:1px solid var(--border); background:var(--surface); color:var(--ink-soft);
+  font-size:11.5px; font-weight:600; padding:4px 10px; border-radius:100px; cursor:pointer;
+  font-family:"Public Sans",sans-serif; font-variant-numeric:tabular-nums;
+}
+.pill-toggle button:hover{ border-color:var(--accent); color:var(--ink); }
+.pill-toggle button.active{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+
+/* The one answer a clinician actually came for: mL, of what, how often. */
+.dose-hero{
+  display:flex; align-items:baseline; gap:8px 12px; flex-wrap:wrap;
+  background:var(--accent-soft); border-radius:10px; padding:12px 14px;
+}
+.dose-hero .hero-ml{
+  font-family:"Public Sans",sans-serif; font-variant-numeric:tabular-nums; font-weight:700;
+  font-size:24px; color:var(--accent); line-height:1.1;
+}
+.dose-hero.two-line .hero-ml{ font-size:15px; font-weight:600; }
+.dose-hero .hero-conc{ font-size:12px; color:var(--ink-soft); }
+.dose-hero .hero-mg{
+  font-size:12px; color:var(--ink-soft); margin-left:auto;
+  font-family:"Public Sans",sans-serif; font-variant-numeric:tabular-nums;
+}
+.dose-hero .hero-mg b{ color:var(--danger); font-weight:700; }
+.dose-hero.capped{ background:var(--danger-soft); }
+.dose-hero.capped .hero-ml{ color:var(--danger); }
+
+/* Everything else (mg/kg math, max-dose ceilings, every other frequency
+   and concentration) stays one click away instead of on the card by default. */
+.dose-details{ border-top:1px dashed var(--border-soft); padding-top:9px; }
+.dose-details summary{
+  cursor:pointer; font-size:11.5px; font-weight:600; color:var(--ink-soft);
+  list-style:none; display:flex; align-items:center; gap:5px;
+}
+.dose-details summary::-webkit-details-marker{ display:none; }
+.dose-details summary::before{ content:"▸"; font-size:9px; }
+.dose-details[open] summary::before{ content:"▾"; }
+.dose-details[open] summary{ margin-bottom:10px; }
+.dose-details-body{ display:flex; flex-direction:column; gap:10px; }
 
 .regimen{ border:1px solid var(--border-soft); border-radius:10px; overflow:hidden; }
 .regimen-head{
@@ -307,6 +378,7 @@ h1,h2,h3{
 }
 .regimen-head.low{ background:var(--accent-soft); color:var(--accent); }
 .regimen-head.high{ background:var(--amber-soft); color:var(--amber); }
+.regimen-head.rx{ background:var(--danger-soft); color:var(--danger); }
 .regimen-head .mgkg{ font-family:"Public Sans",sans-serif; font-variant-numeric:tabular-nums; font-weight:500; opacity:.85; }
 .max-badge{
   display:inline-block; margin-left:6px; padding:1px 7px; border-radius:100px;

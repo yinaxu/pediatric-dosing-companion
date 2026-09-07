@@ -145,7 +145,7 @@
   const ANTIBIOTICS = [
     {
       id:'amox', name:'Amoxicillin', generic:'amoxicillin',
-      concentrations:[125,200,250,400],
+      concentrations:[400,250,125,200],
       regimens:[
         { tier:'low', label:'Standard dose', mgKgDayLow:25, mgKgDayHigh:45, freqOptions:[2,3], maxDosePerDose:1000, maxDosePerDay:2000 },
         { tier:'high', label:'High dose (AOM / resistant strains)', mgKgDayLow:80, mgKgDayHigh:90, freqOptions:[2], maxDosePerDose:1000, maxDosePerDay:2000 },
@@ -156,11 +156,11 @@
     {
       id:'augmentin', name:'Augmentin', generic:'amoxicillin/clavulanate, dosed on the amoxicillin component',
       concentrations:[
-        {label:'125 mg/5 mL (4:1)', mg:125, freqHint:'pairs with TID'},
-        {label:'200 mg/5 mL (7:1)', mg:200, freqHint:'pairs with BID'},
-        {label:'250 mg/5 mL (4:1)', mg:250, freqHint:'pairs with TID'},
         {label:'400 mg/5 mL (7:1)', mg:400, freqHint:'pairs with BID'},
         {label:'600 mg/5 mL ES (14:1)', mg:600, freqHint:'high-dose, BID only'},
+        {label:'250 mg/5 mL (4:1)', mg:250, freqHint:'pairs with TID'},
+        {label:'125 mg/5 mL (4:1)', mg:125, freqHint:'pairs with TID'},
+        {label:'200 mg/5 mL (7:1)', mg:200, freqHint:'pairs with BID'},
       ],
       customConc:true,
       regimens:[
@@ -172,7 +172,7 @@
     },
     {
       id:'cephalexin', name:'Cephalexin', generic:'cephalexin',
-      concentrations:[125,250],
+      concentrations:[250,125],
       regimens:[
         { tier:'low', label:'Standard dose', mgKgDayLow:25, mgKgDayHigh:50, freqOptions:[2,3,4], maxDosePerDose:1000, maxDosePerDay:4000 },
         { tier:'high', label:'High dose (SSTI / bone-joint)', mgKgDayLow:75, mgKgDayHigh:100, freqOptions:[4], maxDosePerDose:1000, maxDosePerDay:4000 },
@@ -192,7 +192,7 @@
     },
     {
       id:'cefdinir', name:'Cefdinir', generic:'cefdinir',
-      concentrations:[125,250],
+      concentrations:[250,125],
       regimens:[
         { tier:'low', label:'Standard dose', mgKgDayLow:14, mgKgDayHigh:14, freqOptions:[1,2], maxDosePerDose:600, maxDosePerDay:600 },
       ],
@@ -207,6 +207,15 @@
       ],
       adult:'400 mg once daily (or 200 mg BID)',
       note:'A single 400 mg dose is used for uncomplicated gonorrhea per CDC guidance. Rising E. coli resistance makes culture-directed therapy preferable for UTIs when possible.'
+    },
+    {
+      id:'cefpodoxime', name:'Cefpodoxime', generic:'cefpodoxime proxetil (Vantin)',
+      concentrations:[100,50],
+      regimens:[
+        { tier:'low', label:'Standard dose', mgKgDayLow:10, mgKgDayHigh:10, freqOptions:[2], maxDosePerDose:200, maxDosePerDay:400 },
+      ],
+      adult:'100–400 mg BID depending on indication',
+      note:'Max per dose varies by indication: a 200 mg/day ceiling applies for pharyngitis/tonsillitis versus 400 mg/day for otitis media, sinusitis, and skin infections. Confirm against the specific indication before dispensing.'
     },
     {
       id:'clindamycin', name:'Clindamycin', generic:'clindamycin (oral solution)',
@@ -233,7 +242,7 @@
 
   const AZITHRO = {
     id:'azithro', name:'Azithromycin', generic:'azithromycin',
-    concentrations:[100,200],
+    concentrations:[200,100],
     adult:'500 mg on day 1, then 250 mg once daily on days 2–5',
     note:'The 5-day taper is standard for AOM, pharyngitis, and community-acquired pneumonia. A 3-day once-daily course is an accepted alternative for some indications.'
   };
@@ -254,11 +263,12 @@
       concentrations:[100],
       infantDrops:'Infant drops 50 mg/1.25 mL also available for younger infants (≥6 months).',
       regimens:[
-        { tier:'low', label:'Low end', mgKgDoseLow:5, mgKgDoseHigh:5, every:'q6–8h', maxDosePerDose:400, maxDosePerDay:40, perKgDay:false },
-        { tier:'high', label:'High end', mgKgDoseLow:10, mgKgDoseHigh:10, every:'q6–8h', maxDosePerDose:400, maxDosePerDay:40, perKgDay:false },
+        { tier:'low', label:'OTC, low end', mgKgDoseLow:5, mgKgDoseHigh:5, every:'q6–8h', maxDosePerDose:400, maxDosePerDay:40, perKgDay:false },
+        { tier:'high', label:'OTC, high end', mgKgDoseLow:10, mgKgDoseHigh:10, every:'q6–8h', maxDosePerDose:400, maxDosePerDay:40, perKgDay:false },
+        { tier:'rx', label:'Prescription dose (Rx only)', mgKgDoseLow:10, mgKgDoseHigh:10, every:'q6–8h', maxDosePerDose:800, maxDosePerDay:40, perKgDay:false, rxOnly:true },
       ],
-      adult:'200–400 mg q6–8h, max 1200 mg/24h over the counter, or up to 3200 mg/24h under prescriber guidance',
-      note:'Only for infants ≥6 months. Max 40 mg/kg/24h, not to exceed 1200 mg/24h OTC. Take with food if GI upset occurs.'
+      adult:'Prescription: up to 800 mg TID (max 3200 mg/24h under prescriber guidance). OTC label dosing: 200–400 mg q6–8h, max 1200 mg/24h.',
+      note:'The two "OTC" tiers reflect standard label dosing. The "Prescription" tier is Rx-strength anti-inflammatory dosing, not an OTC dose, meant for prescriber reference, allowing up to 800 mg/dose. Only for infants ≥6 months. Take with food if GI upset occurs.'
     },
   ];
 
@@ -287,9 +297,109 @@
     },
   ];
 
+  // Weight-based prescription medications outside the antibiotic/OTC groups
+  // above. Each regimen is either "per day" (a daily total split across
+  // freqOptions, like the antibiotics) or "per dose" (a single-administration
+  // amount, like the OTC weight-based drugs). unit defaults to 'mg'; a few
+  // (lactulose, PEG 3350) are dosed in grams instead.
+  const RX_MISC = [
+    {
+      id:'famotidine', name:'Famotidine', generic:'famotidine (Pepcid)', class:'GI (H2 blocker)',
+      concentrations:[40],
+      regimens:[
+        { tier:'low', label:'Standard dose', mgKgLow:0.5, mgKgHigh:1, per:'day', freqOptions:[1,2], maxDosePerDose:40, maxDosePerDay:80 },
+      ],
+      adult:'20 mg BID (up to 40 mg BID for pathological hypersecretory conditions)',
+      note:'Used for GERD, erosive esophagitis, and stress ulcer prophylaxis. Adjust for renal impairment.'
+    },
+    {
+      id:'ondansetron', name:'Ondansetron', generic:'ondansetron (Zofran)', class:'GI (antiemetic)',
+      concentrations:[4],
+      regimens:[
+        { tier:'low', label:'Standard dose', mgKgLow:0.15, mgKgHigh:0.15, per:'dose', every:'q8h PRN', maxDosePerDose:8, maxDosePerDay:24 },
+      ],
+      adult:'4–8 mg q8h PRN (up to 16 mg per dose in some antiemetic protocols)',
+      note:'A single-dose max of 4 mg under about 40 kg and 8 mg at or above 40 kg is common; confirm your institution\'s weight-based cap. Used for gastroenteritis, chemotherapy, and post-operative nausea.'
+    },
+    {
+      id:'lactulose', name:'Lactulose', generic:'lactulose', class:'GI (osmotic laxative)', unit:'g',
+      concentrations:[3.33],
+      regimens:[
+        { tier:'low', label:'Starting dose', mgKgLow:0.5, mgKgHigh:1, per:'day', freqOptions:[1,2] },
+      ],
+      adult:'15–30 mL (10–20 g) once or twice daily, titrated to effect',
+      note:'Titrate to 2–3 soft stools per day. Used for constipation and, at higher doses, hepatic encephalopathy. Expect initial flatulence and cramping.'
+    },
+    {
+      id:'peg3350', name:'Polyethylene Glycol 3350', generic:'PEG 3350 (Miralax)', class:'GI (osmotic laxative)', unit:'g', noLiquidConc:true,
+      regimens:[
+        { tier:'low', label:'Maintenance', mgKgLow:0.4, mgKgHigh:1, per:'day', freqOptions:[1,2], maxDosePerDay:34 },
+        { tier:'high', label:'Disimpaction (short course)', mgKgLow:1, mgKgHigh:1.5, per:'day', freqOptions:[1] },
+      ],
+      adult:'17 g (1 capful) once daily; may increase per product labeling',
+      note:'Mix fully in 4–8 oz of liquid. Disimpaction dosing (1–1.5 g/kg/day for 3–6 days) should be guided by a prescriber given GI risk with prolonged high-dose use.'
+    },
+    {
+      id:'prednisolone', name:'Prednisolone', generic:'prednisolone (Orapred, Pediapred)', class:'Steroid',
+      concentrations:[15,5,25],
+      regimens:[
+        { tier:'low', label:'Standard dose', mgKgLow:1, mgKgHigh:2, per:'day', freqOptions:[1,2], maxDosePerDose:60, maxDosePerDay:60 },
+      ],
+      adult:'5–60 mg/day depending on indication',
+      note:'Typical short courses (3–5 days) for acute asthma exacerbations and croup. Give with food to reduce GI upset.'
+    },
+    {
+      id:'dexamethasone', name:'Dexamethasone', generic:'dexamethasone', class:'Steroid',
+      concentrations:[5,0.5],
+      regimens:[
+        { tier:'low', label:'Single dose', mgKgLow:0.15, mgKgHigh:0.6, per:'dose', every:'once (may repeat per protocol)', maxDosePerDose:16, maxDosePerDay:16 },
+      ],
+      adult:'10–16 mg single dose for croup or asthma bursts, per protocol',
+      note:'The lower end (~0.15 mg/kg) is typical for mild croup, the higher end (up to 0.6 mg/kg) for asthma exacerbations. The 1 mg/mL concentrated solution gives the same dose in a much smaller volume than the 0.5 mg/5 mL solution, confirm which one you\'re drawing from.'
+    },
+    {
+      id:'levetiracetam', name:'Levetiracetam', generic:'levetiracetam (Keppra)', class:'Neuro (anticonvulsant)',
+      concentrations:[500],
+      regimens:[
+        { tier:'low', label:'Starting dose', mgKgLow:20, mgKgHigh:20, per:'day', freqOptions:[2], maxDosePerDose:1500, maxDosePerDay:3000 },
+        { tier:'high', label:'Titrated maintenance (max)', mgKgLow:60, mgKgHigh:60, per:'day', freqOptions:[2], maxDosePerDose:1500, maxDosePerDay:3000 },
+      ],
+      adult:'500–1500 mg BID',
+      note:'Start at 20 mg/kg/day divided BID; titrate upward, typically every 2 weeks, to a maximum of 60 mg/kg/day for seizure control per neurology guidance.'
+    },
+    {
+      id:'phenobarbital', name:'Phenobarbital', generic:'phenobarbital', class:'Neuro (anticonvulsant)', controlled:true,
+      concentrations:[20],
+      regimens:[
+        { tier:'low', label:'Maintenance dose', mgKgLow:3, mgKgHigh:5, per:'day', freqOptions:[1,2], maxDosePerDose:100, maxDosePerDay:300 },
+      ],
+      adult:'60–200 mg/day, individualized to serum levels',
+      note:'Maintenance dosing for neonatal or pediatric epilepsy; adjust to levels. IV loading doses for status epilepticus are not covered here. Schedule IV controlled substance.'
+    },
+    {
+      id:'diazepam', name:'Diazepam', generic:'diazepam (Valium)', class:'Neuro (benzodiazepine)', controlled:true,
+      concentrations:[5],
+      regimens:[
+        { tier:'low', label:'Typical oral dose', mgKgLow:0.12, mgKgHigh:0.8, per:'dose', every:'per indication, see note', maxDosePerDose:10 },
+      ],
+      adult:'2–10 mg q6–12h PRN, depending on indication',
+      note:'Dosing varies substantially by indication: procedural sedation, spasticity management, and abortive seizure protocols each use a different weight-based dose and route. Confirm the specific regimen with the prescribing protocol before dispensing. Schedule IV controlled substance; watch for respiratory depression, especially with other CNS depressants on board.'
+    },
+    {
+      id:'oxycodone', name:'Oxycodone', generic:'oxycodone', class:'Analgesic (opioid)', controlled:true,
+      concentrations:[5],
+      regimens:[
+        { tier:'low', label:'Standard dose', mgKgLow:0.05, mgKgHigh:0.15, per:'dose', every:'q4–6h PRN', maxDosePerDose:10 },
+      ],
+      adult:'5–10 mg q4–6h PRN',
+      note:'Reserve for severe pain not responsive to non-opioid options. Schedule II controlled substance; monitor for respiratory depression and sedation, particularly in opioid-naive patients. Confirm against institutional pediatric opioid dosing policy before dispensing.'
+    },
+  ];
+
   // ---------- rendering ----------
   const abxGrid = document.getElementById('abxGrid');
   const otcGrid = document.getElementById('otcGrid');
+  const rxGrid = document.getElementById('rxGrid');
   const derivedLine = document.getElementById('derivedLine');
   const adultFlag = document.getElementById('adultFlag');
   const exampleHint = document.getElementById('exampleHint');
@@ -314,11 +424,87 @@
     return '<div class="dose-line'+cappedClass+'"><span class="freq">'+freqLabel+'</span><span class="amt">'+amtText+(capped?' <small>(cap)</small>':'')+'</span></div>';
   }
 
+  // ---------- per-card choices (which dose tier, frequency, stocked
+  // concentration a card is showing) so the fast-glance view can stay
+  // narrowed to one combination while every combination stays reachable
+  // in "Dosing math & all options" ----------
+  const cardState = {};
+  function stateFor(id){
+    if (!cardState[id]) cardState[id] = {};
+    return cardState[id];
+  }
+  function pillToggle(label, buttons){
+    return '<div class="control-row"><span class="control-label">'+label+'</span><div class="pill-toggle">'+buttons.join('')+'</div></div>';
+  }
+  function pillBtn(action, id, dataAttr, dataVal, active, text){
+    return '<button type="button" data-action="'+action+'" data-id="'+id+'" data-'+dataAttr+'="'+dataVal+'" class="'+(active?'active':'')+'">'+text+'</button>';
+  }
+
   function renderAntibiotic(drug, weightKg){
+    const st = stateFor(drug.id);
+    const regimens = drug.regimens;
+    if (!st.tier || !regimens.some(r => r.tier === st.tier)) st.tier = regimens[0].tier;
+    const selReg = regimens.find(r => r.tier === st.tier);
+    if (!selReg.freqOptions.includes(st.freq)) st.freq = selReg.freqOptions[0];
+
+    let concList = drug.customConc ? drug.concentrations : drug.concentrations.map(mg => ({mg, label: mg+' mg/5 mL'}));
+    if (selReg.requiresConc){
+      concList = concList.filter(c => c.mg === selReg.requiresConc);
+    }
+    if (st.concIdx == null || st.concIdx >= concList.length) st.concIdx = 0;
+    const selConc = concList[st.concIdx];
+
+    // ---- fast-glance dose for the selected tier / frequency / concentration ----
+    let heroHTML;
+    if (weightKg == null){
+      heroHTML = '<div class="dose-hero"><span class="hero-ml">—</span><span class="hero-conc">of '+(selConc.label||selConc.mg+' mg/5 mL')+', '+FREQ_LABEL[st.freq]+'</span></div>';
+    } else {
+      let dayLow = selReg.mgKgDayLow * weightKg;
+      let dayHigh = selReg.mgKgDayHigh * weightKg;
+      let capped = false;
+      if (selReg.maxDosePerDay && (dayLow > selReg.maxDosePerDay || dayHigh > selReg.maxDosePerDay)){
+        dayLow = Math.min(dayLow, selReg.maxDosePerDay);
+        dayHigh = Math.min(dayHigh, selReg.maxDosePerDay);
+        capped = true;
+      }
+      let doseLow = dayLow / st.freq;
+      let doseHigh = dayHigh / st.freq;
+      if (selReg.maxDosePerDose && (doseLow > selReg.maxDosePerDose || doseHigh > selReg.maxDosePerDose)){
+        doseLow = Math.min(doseLow, selReg.maxDosePerDose);
+        doseHigh = Math.min(doseHigh, selReg.maxDosePerDose);
+        capped = true;
+      }
+      doseLow = round(doseLow, 0);
+      doseHigh = round(doseHigh, 0);
+      const mlLow = roundMl((doseLow / selConc.mg) * 5);
+      const mlHigh = roundMl((doseHigh / selConc.mg) * 5);
+      const mlText = mlLow === mlHigh ? fmt(mlLow) : fmt(mlLow)+'–'+fmt(mlHigh);
+      const mgText = doseLow === doseHigh ? fmt(doseLow) : fmt(doseLow)+'–'+fmt(doseHigh);
+      heroHTML = '<div class="dose-hero'+(capped?' capped':'')+'">'
+        +'<span class="hero-ml">'+mlText+' mL</span>'
+        +'<span class="hero-conc">of '+(selConc.label||selConc.mg+' mg/5 mL')+', '+FREQ_LABEL[st.freq]+'</span>'
+        +'<span class="hero-mg">'+mgText+' mg/dose'+(capped?' <b>(capped)</b>':'')+'</span>'
+        +'</div>';
+    }
+
+    // ---- controls: only shown when there is more than one option to pick from ----
+    let controlsHTML = '<div class="card-controls">';
+    if (regimens.length > 1){
+      controlsHTML += pillToggle('Dose', regimens.map(r => pillBtn('tier', drug.id, 'tier', r.tier, r.tier===st.tier, r.label)));
+    }
+    if (selReg.freqOptions.length > 1){
+      controlsHTML += pillToggle('Frequency', selReg.freqOptions.map(f => pillBtn('freq', drug.id, 'freq', f, f===st.freq, FREQ_LABEL[f])));
+    }
+    if (concList.length > 1){
+      controlsHTML += pillToggle('Stocked', concList.slice(0,2).map((c,i) => pillBtn('conc', drug.id, 'concidx', i, i===st.concIdx, c.label||c.mg+' mg/5 mL')));
+    }
+    controlsHTML += '</div>';
+
+    // ---- full math for every tier/frequency/concentration, collapsed by default ----
     const capNotes = [];
     let bodyHTML = '';
 
-    drug.regimens.forEach(reg => {
+    regimens.forEach(reg => {
       const maxHTML = reg.maxDosePerDose ? ' <span class="max-badge">'+maxLabel(reg.maxDosePerDose)+'</span>' : '';
       let regHTML = '<div class="regimen"><div class="regimen-head '+reg.tier+'"><span>'+reg.label+'</span><span class="mgkg">'+reg.mgKgDayLow+'–'+reg.mgKgDayHigh+' mg/kg/day'+maxHTML+'</span></div>';
       reg.freqOptions.forEach(freq => {
@@ -367,10 +553,13 @@
     const concPills = (drug.customConc ? drug.concentrations.map(c=>c.label) : drug.concentrations.map(mg=>mg+' mg/5 mL'))
       .map(l => '<span class="conc-pill">'+l+'</span>').join('');
 
+    const detailsHTML = '<details class="dose-details"><summary>Dosing math &amp; all options</summary><div class="dose-details-body">'
+      + bodyHTML + capHTML + '<div class="conc-row">'+concPills+'</div>'
+      + '</div></details>';
+
     return '<div class="card" data-id="'+drug.id+'">'
       +'<div class="card-head"><div><h3>'+drug.name+'</h3><div class="generic">'+drug.generic+'</div></div><span class="class-tag abx">Rx antibiotic</span></div>'
-      + bodyHTML + capHTML
-      +'<div class="conc-row">'+concPills+'</div>'
+      + controlsHTML + heroHTML + detailsHTML
       +'<div class="adult-line"><b>Adult:</b> '+drug.adult+'</div>'
       +'<div class="note">'+drug.note+'</div>'
       +'</div>';
@@ -378,6 +567,41 @@
 
   function renderAzithro(weightKg){
     const d = AZITHRO;
+    const st = stateFor(d.id);
+    if (st.tier !== '3day') st.tier = '5day';
+    if (st.concIdx == null || st.concIdx >= d.concentrations.length) st.concIdx = 0;
+    const conc = d.concentrations[st.concIdx];
+    const mlFor = (mg, c) => roundMl((mg/c)*5);
+
+    let heroHTML;
+    if (weightKg == null){
+      heroHTML = '<div class="dose-hero"><span class="hero-ml">—</span><span class="hero-conc">of '+conc+' mg/5 mL</span></div>';
+    } else {
+      let day1Raw = 10*weightKg, day1 = round(Math.min(day1Raw, 500), 0), day1Capped = day1Raw > 500;
+      let day2Raw = 5*weightKg, day2to5 = round(Math.min(day2Raw, 250), 0), day2Capped = day2Raw > 250;
+      let altRaw = 10*weightKg, alt3day = round(Math.min(altRaw, 500), 0), altCapped = altRaw > 500;
+      if (st.tier === '3day'){
+        heroHTML = '<div class="dose-hero'+(altCapped?' capped':'')+'">'
+          +'<span class="hero-ml">'+fmt(mlFor(alt3day,conc))+' mL</span>'
+          +'<span class="hero-conc">of '+conc+' mg/5 mL, once daily × 3 days</span>'
+          +'<span class="hero-mg">'+alt3day+' mg/dose'+(altCapped?' <b>(capped)</b>':'')+'</span>'
+          +'</div>';
+      } else {
+        heroHTML = '<div class="dose-hero two-line'+((day1Capped||day2Capped)?' capped':'')+'">'
+          +'<span class="hero-ml">Day 1: '+fmt(mlFor(day1,conc))+' mL &nbsp;·&nbsp; Days 2–5: '+fmt(mlFor(day2to5,conc))+' mL</span>'
+          +'<span class="hero-conc">of '+conc+' mg/5 mL</span>'
+          +'</div>';
+      }
+    }
+
+    let controlsHTML = '<div class="card-controls">'
+      + pillToggle('Course', [
+          pillBtn('tier', d.id, 'tier', '5day', st.tier==='5day', '5-day taper'),
+          pillBtn('tier', d.id, 'tier', '3day', st.tier==='3day', '3-day alternative'),
+        ])
+      + (d.concentrations.length > 1 ? pillToggle('Stocked', d.concentrations.map((c,i) => pillBtn('conc', d.id, 'concidx', i, i===st.concIdx, c+' mg/5 mL'))) : '')
+      + '</div>';
+
     let body;
     if (weightKg == null){
       body = '<div class="regimen"><div class="regimen-head low"><span>5-day taper</span><span class="mgkg">10 → 5 mg/kg/day <span class="max-badge">500 mg/dose max</span></span></div>'
@@ -387,7 +611,6 @@
       let day1Raw = 10*weightKg, day1 = round(Math.min(day1Raw, 500), 0), day1Capped = day1Raw > 500;
       let day2Raw = 5*weightKg, day2to5 = round(Math.min(day2Raw, 250), 0), day2Capped = day2Raw > 250;
       let altRaw = 10*weightKg, alt3day = round(Math.min(altRaw, 500), 0), altCapped = altRaw > 500;
-      const mlFor = (mg, conc) => roundMl((mg/conc)*5);
       body = '<div class="regimen"><div class="regimen-head low"><span>5-day taper (standard)</span><span class="mgkg">10 → 5 mg/kg/day <span class="max-badge">500 mg/dose max</span></span></div>'
         + '<div class="dose-line'+(day1Capped?' capped':'')+'"><span class="freq">Day 1</span><span class="amt">'+day1+' mg'+(day1Capped?' <small>(cap)</small>':'')+'</span></div>'
         + d.concentrations.map(c=>'<div class="dose-line" style="padding-left:22px;font-size:12.5px;color:var(--ink-soft)"><span class="freq">'+c+' mg/5 mL</span><span class="amt mono">'+mlFor(day1,c)+' mL</span></div>').join('')
@@ -400,19 +623,54 @@
         + '</div>';
     }
     const concPills = d.concentrations.map(mg=>'<span class="conc-pill">'+mg+' mg/5 mL</span>').join('');
+    const detailsHTML = '<details class="dose-details"><summary>Dosing math &amp; all options</summary><div class="dose-details-body">'
+      + body + '<div class="conc-row">'+concPills+'</div>'
+      + '</div></details>';
+
     return '<div class="card" data-id="'+d.id+'">'
       +'<div class="card-head"><div><h3>'+d.name+'</h3><div class="generic">'+d.generic+'</div></div><span class="class-tag abx">Rx antibiotic</span></div>'
-      + body
-      +'<div class="conc-row">'+concPills+'</div>'
+      + controlsHTML + heroHTML + detailsHTML
       +'<div class="adult-line"><b>Adult:</b> '+d.adult+'</div>'
       +'<div class="note">'+d.note+'</div>'
       +'</div>';
   }
 
   function renderOtcWeight(drug, weightKg){
+    const st = stateFor(drug.id);
+    const regimens = drug.regimens;
+    if (!st.tier || !regimens.some(r => r.tier === st.tier)) st.tier = regimens[0].tier;
+    const selReg = regimens.find(r => r.tier === st.tier);
+    if (st.concIdx == null || st.concIdx >= drug.concentrations.length) st.concIdx = 0;
+    const concMg = drug.concentrations[st.concIdx];
+
+    let heroHTML;
+    if (weightKg == null){
+      heroHTML = '<div class="dose-hero"><span class="hero-ml">—</span><span class="hero-conc">of '+concMg+' mg/5 mL, '+selReg.every+'</span></div>';
+    } else {
+      let dose = selReg.mgKgDoseLow * weightKg;
+      let capped = false;
+      if (selReg.maxDosePerDose && dose > selReg.maxDosePerDose){ dose = selReg.maxDosePerDose; capped = true; }
+      dose = round(dose, 0);
+      const ml = roundMl((dose / concMg) * 5);
+      heroHTML = '<div class="dose-hero'+(capped?' capped':'')+'">'
+        +'<span class="hero-ml">'+fmt(ml)+' mL</span>'
+        +'<span class="hero-conc">of '+concMg+' mg/5 mL, '+selReg.every+'</span>'
+        +'<span class="hero-mg">'+fmt(dose)+' mg/dose'+(capped?' <b>(capped)</b>':'')+'</span>'
+        +'</div>';
+    }
+
+    let controlsHTML = '<div class="card-controls">';
+    if (regimens.length > 1){
+      controlsHTML += pillToggle('Dose', regimens.map(r => pillBtn('tier', drug.id, 'tier', r.tier, r.tier===st.tier, r.label)));
+    }
+    if (drug.concentrations.length > 1){
+      controlsHTML += pillToggle('Stocked', drug.concentrations.map((c,i) => pillBtn('conc', drug.id, 'concidx', i, i===st.concIdx, c+' mg/5 mL')));
+    }
+    controlsHTML += '</div>';
+
     let body = '';
     let capNotes = [];
-    drug.regimens.forEach(reg => {
+    regimens.forEach(reg => {
       const maxHTML = reg.maxDosePerDose ? ' <span class="max-badge">'+maxLabel(reg.maxDosePerDose)+'</span>' : '';
       let regHTML = '<div class="regimen"><div class="regimen-head '+reg.tier+'"><span>'+reg.label+'</span><span class="mgkg">'+reg.mgKgDoseLow+' mg/kg/dose, '+reg.every+maxHTML+'</span></div>';
       if (weightKg == null){
@@ -435,10 +693,13 @@
     const uniqueCapNotes = [...new Set(capNotes)];
     const capHTML = uniqueCapNotes.length ? '<div class="cap-note">⚠ '+uniqueCapNotes.join('; ')+'</div>' : '';
     const concPills = drug.concentrations.map(mg=>'<span class="conc-pill">'+mg+' mg/5 mL</span>').join('');
+    const detailsHTML = '<details class="dose-details"><summary>Dosing math &amp; all options</summary><div class="dose-details-body">'
+      + body + capHTML + '<div class="conc-row">'+concPills+'</div>'
+      + '</div></details>';
+
     return '<div class="card" data-id="'+drug.id+'">'
       +'<div class="card-head"><div><h3>'+drug.name+'</h3><div class="generic">'+drug.generic+'</div></div><span class="class-tag otc">OTC · '+drug.class+'</span></div>'
-      + body + capHTML
-      +'<div class="conc-row">'+concPills+'</div>'
+      + controlsHTML + heroHTML + detailsHTML
       + (drug.infantDrops ? '<div class="note">'+drug.infantDrops+'</div>' : '')
       +'<div class="adult-line"><b>Adult:</b> '+drug.adult+'</div>'
       +'<div class="note">'+drug.note+'</div>'
@@ -464,16 +725,129 @@
       +'</div>';
   }
 
+  function renderRxWeight(drug, weightKg){
+    const st = stateFor(drug.id);
+    const unit = drug.unit || 'mg';
+    const hasConc = !drug.noLiquidConc;
+    const regimens = drug.regimens;
+    if (!st.tier || !regimens.some(r => r.tier === st.tier)) st.tier = regimens[0].tier;
+    const selReg = regimens.find(r => r.tier === st.tier);
+    if (selReg.per === 'day' && !selReg.freqOptions.includes(st.freq)) st.freq = selReg.freqOptions[0];
+    if (hasConc && (st.concIdx == null || st.concIdx >= drug.concentrations.length)) st.concIdx = 0;
+    const concIdx = hasConc ? st.concIdx : 0;
+    const concVal = hasConc ? drug.concentrations[concIdx] : null;
+    const freqLabel = selReg.per === 'day' ? FREQ_LABEL[st.freq] : selReg.every;
+
+    function computeDose(reg, freq){
+      if (weightKg == null) return null;
+      let doseLow, doseHigh, capped = false;
+      if (reg.per === 'day'){
+        let dayLow = reg.mgKgLow * weightKg, dayHigh = reg.mgKgHigh * weightKg;
+        if (reg.maxDosePerDay && (dayLow > reg.maxDosePerDay || dayHigh > reg.maxDosePerDay)){
+          dayLow = Math.min(dayLow, reg.maxDosePerDay); dayHigh = Math.min(dayHigh, reg.maxDosePerDay); capped = true;
+        }
+        doseLow = dayLow / freq; doseHigh = dayHigh / freq;
+      } else {
+        doseLow = reg.mgKgLow * weightKg; doseHigh = reg.mgKgHigh * weightKg;
+      }
+      if (reg.maxDosePerDose && (doseLow > reg.maxDosePerDose || doseHigh > reg.maxDosePerDose)){
+        doseLow = Math.min(doseLow, reg.maxDosePerDose); doseHigh = Math.min(doseHigh, reg.maxDosePerDose); capped = true;
+      }
+      return { doseLow: round(doseLow,2), doseHigh: round(doseHigh,2), capped };
+    }
+
+    // ---- fast-glance dose for the selected tier / frequency / concentration ----
+    const computed = computeDose(selReg, st.freq);
+    let heroHTML;
+    if (!computed){
+      heroHTML = '<div class="dose-hero"><span class="hero-ml">—</span><span class="hero-conc">'+(hasConc?'of '+concVal+' '+unit+'/5 mL, ':'')+freqLabel+'</span></div>';
+    } else {
+      const { doseLow, doseHigh, capped } = computed;
+      const doseText = doseLow===doseHigh ? fmt(doseLow) : fmt(doseLow)+'–'+fmt(doseHigh);
+      if (hasConc){
+        const mlLow = roundMl((doseLow/concVal)*5), mlHigh = roundMl((doseHigh/concVal)*5);
+        const mlText = mlLow===mlHigh ? fmt(mlLow) : fmt(mlLow)+'–'+fmt(mlHigh);
+        heroHTML = '<div class="dose-hero'+(capped?' capped':'')+'">'
+          +'<span class="hero-ml">'+mlText+' mL</span>'
+          +'<span class="hero-conc">of '+concVal+' '+unit+'/5 mL, '+freqLabel+'</span>'
+          +'<span class="hero-mg">'+doseText+' '+unit+'/dose'+(capped?' <b>(capped)</b>':'')+'</span>'
+          +'</div>';
+      } else {
+        const capfuls = round(doseLow/17,1);
+        heroHTML = '<div class="dose-hero'+(capped?' capped':'')+'">'
+          +'<span class="hero-ml">'+doseText+' '+unit+'</span>'
+          +'<span class="hero-conc">'+freqLabel+' (~'+capfuls+' capful'+(capfuls===1?'':'s')+' of 17 g each)</span>'
+          +(capped?'<span class="hero-mg"><b>(capped)</b></span>':'')
+          +'</div>';
+      }
+    }
+
+    // ---- controls ----
+    let controlsHTML = '<div class="card-controls">';
+    if (regimens.length > 1){
+      controlsHTML += pillToggle('Dose', regimens.map(r => pillBtn('tier', drug.id, 'tier', r.tier, r.tier===st.tier, r.label)));
+    }
+    if (selReg.per === 'day' && selReg.freqOptions.length > 1){
+      controlsHTML += pillToggle('Frequency', selReg.freqOptions.map(f => pillBtn('freq', drug.id, 'freq', f, f===st.freq, FREQ_LABEL[f])));
+    }
+    if (hasConc && drug.concentrations.length > 1){
+      controlsHTML += pillToggle('Stocked', drug.concentrations.map((c,i) => pillBtn('conc', drug.id, 'concidx', i, i===concIdx, c+' '+unit+'/5 mL')));
+    }
+    controlsHTML += '</div>';
+
+    // ---- full math for every tier/frequency, collapsed by default ----
+    let body = '';
+    regimens.forEach(reg => {
+      const maxHTML = reg.maxDosePerDose ? ' <span class="max-badge">'+(reg.maxDosePerDose>=1000 ? round(reg.maxDosePerDose/1000,2)+' g/dose max' : reg.maxDosePerDose+' '+unit+'/dose max')+'</span>' : '';
+      const rangeLabel = reg.mgKgLow+(reg.mgKgHigh!==reg.mgKgLow?'–'+reg.mgKgHigh:'')+' '+unit+'/kg/'+(reg.per==='day'?'day':'dose');
+      let regHTML = '<div class="regimen"><div class="regimen-head '+reg.tier+'"><span>'+reg.label+'</span><span class="mgkg">'+rangeLabel+maxHTML+'</span></div>';
+      const freqList = reg.per === 'day' ? reg.freqOptions : [null];
+      freqList.forEach(f => {
+        const label = reg.per === 'day' ? FREQ_LABEL[f] : reg.every;
+        if (weightKg == null){
+          regHTML += '<div class="dose-line"><span class="freq">'+label+'</span><span class="amt">—</span></div>';
+          return;
+        }
+        const c = computeDose(reg, f);
+        regHTML += doseLineHTML(label, c.doseLow, c.doseHigh, unit, c.capped);
+        if (hasConc){
+          drug.concentrations.forEach(cv => {
+            const mlLow = roundMl((c.doseLow/cv)*5), mlHigh = roundMl((c.doseHigh/cv)*5);
+            regHTML += '<div class="dose-line" style="padding-left:22px;font-size:12.5px;color:var(--ink-soft)"><span class="freq">'+cv+' '+unit+'/5 mL</span><span class="amt mono">'+(mlLow===mlHigh?fmt(mlLow):fmt(mlLow)+'–'+fmt(mlHigh))+' mL</span></div>';
+          });
+        }
+      });
+      regHTML += '</div>';
+      body += regHTML;
+    });
+    const concPills = hasConc ? drug.concentrations.map(c=>'<span class="conc-pill">'+c+' '+unit+'/5 mL</span>').join('') : '';
+    const detailsHTML = '<details class="dose-details"><summary>Dosing math &amp; all options</summary><div class="dose-details-body">'
+      + body + (concPills ? '<div class="conc-row">'+concPills+'</div>' : '')
+      + '</div></details>';
+
+    const tagClass = drug.controlled ? 'controlled' : 'rx';
+    const tagText = (drug.controlled ? 'Controlled · ' : 'Rx · ') + drug.class;
+
+    return '<div class="card" data-id="'+drug.id+'">'
+      +'<div class="card-head"><div><h3>'+drug.name+'</h3><div class="generic">'+drug.generic+'</div></div><span class="class-tag '+tagClass+'">'+tagText+'</span></div>'
+      + controlsHTML + heroHTML + detailsHTML
+      +'<div class="adult-line"><b>Adult:</b> '+drug.adult+'</div>'
+      +'<div class="note">'+drug.note+'</div>'
+      +'</div>';
+  }
+
   // ---------- "See what you need" picker ----------
   // Selecting a medication pulls it into its own box up top. Everything
   // else stays listed further down the page, nothing is ever hidden.
   const ABX_IDS = ANTIBIOTICS.map(d => ({id:d.id, name:d.name})).concat([{id:AZITHRO.id, name:AZITHRO.name}]);
   const OTC_IDS = OTC_WEIGHT.map(d => ({id:d.id, name:d.name})).concat(OTC_AGE.map(d => ({id:d.id, name:d.name})));
+  const RX_IDS = RX_MISC.map(d => ({id:d.id, name:d.name}));
   let selectedAgents = new Set();
 
   function buildFilterChips(){
     const chipRowAbx = document.getElementById('chipRowAbx');
     const chipRowOtc = document.getElementById('chipRowOtc');
+    const chipRowRx = document.getElementById('chipRowRx');
     function makeChip(item){
       const c = document.createElement('button');
       c.type = 'button';
@@ -489,10 +863,11 @@
     }
     ABX_IDS.forEach(item => chipRowAbx.appendChild(makeChip(item)));
     OTC_IDS.forEach(item => chipRowOtc.appendChild(makeChip(item)));
+    if (chipRowRx) RX_IDS.forEach(item => chipRowRx.appendChild(makeChip(item)));
     syncChips();
   }
   function syncChips(){
-    document.querySelectorAll('#chipRowAbx .chip, #chipRowOtc .chip').forEach(c => {
+    document.querySelectorAll('#chipRowAbx .chip, #chipRowOtc .chip, #chipRowRx .chip').forEach(c => {
       c.classList.toggle('selected', selectedAgents.has(c.dataset.id));
     });
   }
@@ -505,6 +880,20 @@
 
   const selectionBox = document.getElementById('selectionBox');
   const selectionGrid = document.getElementById('selectionGrid');
+
+  // Cards are rebuilt from scratch on every render, so their tier/frequency/
+  // concentration buttons are wired up once here, on the grids themselves,
+  // rather than re-attached to elements that get thrown away each time.
+  function handleCardControlClick(e){
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const st = stateFor(btn.dataset.id);
+    if (btn.dataset.action === 'tier') st.tier = btn.dataset.tier;
+    if (btn.dataset.action === 'freq') st.freq = parseInt(btn.dataset.freq, 10);
+    if (btn.dataset.action === 'conc') st.concIdx = parseInt(btn.dataset.concidx, 10);
+    render();
+  }
+  [abxGrid, otcGrid, rxGrid, selectionGrid].forEach(grid => grid.addEventListener('click', handleCardControlClick));
 
   function render(){
     const weightKg = getWeightKg();
@@ -531,10 +920,12 @@
       .concat([{ id:AZITHRO.id, html: renderAzithro(weightKg) }]);
     const otcAll = OTC_WEIGHT.map(d => ({ id:d.id, html: renderOtcWeight(d, weightKg) }))
       .concat(OTC_AGE.map(d => ({ id:d.id, html: renderOtcAge(d, ageM) })));
+    const rxAll = RX_MISC.map(d => ({ id:d.id, html: renderRxWeight(d, weightKg) }));
 
-    const selectedItems = abxAll.concat(otcAll).filter(x => selectedAgents.has(x.id));
+    const selectedItems = abxAll.concat(otcAll).concat(rxAll).filter(x => selectedAgents.has(x.id));
     const remainingAbx = abxAll.filter(x => !selectedAgents.has(x.id));
     const remainingOtc = otcAll.filter(x => !selectedAgents.has(x.id));
+    const remainingRx = rxAll.filter(x => !selectedAgents.has(x.id));
 
     selectionBox.hidden = selectedItems.length === 0;
     if (selectedItems.length){
@@ -547,6 +938,11 @@
     otcGrid.innerHTML = remainingOtc.length
       ? remainingOtc.map(x => x.html).join('')
       : '<p class="selection-empty">Every OTC medication is in your selection above.</p>';
+    if (rxGrid){
+      rxGrid.innerHTML = remainingRx.length
+        ? remainingRx.map(x => x.html).join('')
+        : '<p class="selection-empty">Every medication in this group is in your selection above.</p>';
+    }
   }
 
   render();

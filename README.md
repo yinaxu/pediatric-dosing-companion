@@ -20,9 +20,11 @@ Type in a child's weight, and optionally their age, and the page updates to show
 
 ## What's covered
 
-**Antibiotics:** amoxicillin, Augmentin, cephalexin, penicillin VK, cefdinir, cefixime, clindamycin, trimethoprim-sulfamethoxazole, and azithromycin
+**Antibiotics:** amoxicillin, Augmentin, cephalexin, penicillin VK, cefdinir, cefixime, cefpodoxime, clindamycin, trimethoprim-sulfamethoxazole, and azithromycin
 
 **Over-the-counter medications:** acetaminophen, ibuprofen, cetirizine, and loratadine
+
+**Other prescription medications:** famotidine, ondansetron, lactulose, polyethylene glycol 3350, prednisolone, dexamethasone, levetiracetam, phenobarbital, diazepam, and oxycodone. Controlled substances (phenobarbital, diazepam, oxycodone) are flagged with a red tag on their card.
 
 ## How to use it
 
