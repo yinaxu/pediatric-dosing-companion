@@ -18,8 +18,7 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<script data-goatcounter="https://yinaxu.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
+
 <div class="wrap">
 
   <div class="masthead">
@@ -118,6 +117,41 @@
   </footer>
 </div>
 
+<!-- Runtime error overlay to surface JS exceptions for debugging -->
+<script>
+  (function(){
+    function showError(msg){
+      var el = document.getElementById('jsErrorBanner');
+      if (!el){
+        el = document.createElement('div');
+        el.id = 'jsErrorBanner';
+        el.style.position = 'fixed';
+        el.style.left = '0';
+        el.style.right = '0';
+        el.style.top = '0';
+        el.style.background = 'rgba(220,60,60,0.95)';
+        el.style.color = 'white';
+        el.style.padding = '10px 12px';
+        el.style.fontFamily = 'sans-serif';
+        el.style.zIndex = '9999';
+        el.style.fontSize = '13px';
+        el.style.lineHeight = '1.2';
+        document.body.insertBefore(el, document.body.firstChild);
+      }
+      el.textContent = 'JS error: ' + msg;
+      console.error('JS error:', msg);
+    }
+    window.addEventListener('error', function(e){
+      try { showError((e && e.message) ? e.message : String(e)); } catch (er) { console.error(er); }
+    });
+    window.addEventListener('unhandledrejection', function(e){
+      try { showError('UnhandledRejection: ' + (e && e.reason && e.reason.message ? e.reason.message : String(e.reason))); } catch (er) { console.error(er); }
+    });
+    window._showJsError = showError;
+  })();
+</script>
+
 <script src="script.js"></script>
+<script data-goatcounter="https://yinaxu.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </body>
 </html>
