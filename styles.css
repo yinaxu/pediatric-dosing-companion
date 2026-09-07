@@ -78,28 +78,29 @@
 
 /* --------------------------------------------------------------------------
    2. Base & typography
-   Fraunces (serif) for headings, IBM Plex Sans for UI/body text,
-   IBM Plex Mono for anything numeric (doses, volumes, weights).
-   Load the three families via <link> tags in the HTML <head> — see index.html.
+   Source Serif 4 for headings, Public Sans for everything else,
+   including numeric values (doses, volumes, weights), set with tabular
+   figures so numbers line up in columns.
+   Load both families via a <link> tag in the HTML <head>; see index.html.
    -------------------------------------------------------------------------- */
 *{box-sizing:border-box;}
 body{
   background:var(--bg);
   color:var(--ink);
-  font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  font-family:"Public Sans", ui-sans-serif, system-ui, sans-serif;
   line-height:1.5;
   -webkit-font-smoothing:antialiased;
   margin:0;
 }
 h1,h2,h3{
-  font-family:"Fraunces", ui-serif, Georgia, serif;
+  font-family:"Source Serif 4", ui-serif, Georgia, serif;
   text-wrap:balance;
   font-weight:600;
   letter-spacing:-0.01em;
   margin:0;
   color:var(--ink);
 }
-.mono{ font-family:"IBM Plex Mono", ui-monospace, monospace; font-variant-numeric:tabular-nums; }
+.mono{ font-family:"Public Sans", ui-sans-serif, sans-serif; font-variant-numeric:tabular-nums; }
 .wrap{ max-width:960px; margin:0 auto; padding:32px 20px 80px; }
 
 /* --------------------------------------------------------------------------
@@ -116,17 +117,11 @@ h1,h2,h3{
 .rx-mark{
   width:20px; height:20px; border-radius:5px; background:var(--accent);
   display:inline-flex; align-items:center; justify-content:center;
-  color:var(--accent-ink); font-family:"Fraunces",serif; font-weight:700; font-size:13px;
+  color:var(--accent-ink); font-family:"Source Serif 4",serif; font-weight:700; font-size:13px;
   flex:none;
 }
 .masthead h1{ font-size:clamp(26px,4vw,34px); }
-.masthead p.sub{ color:var(--ink-soft); font-size:14.5px; margin-top:6px; max-width:52ch; }
-.theme-toggle{
-  border:1px solid var(--border); background:var(--surface); color:var(--ink-soft);
-  border-radius:8px; padding:7px 11px; font-size:12.5px; cursor:pointer; white-space:nowrap;
-  font-family:"IBM Plex Sans", sans-serif;
-}
-.theme-toggle:hover{ color:var(--ink); border-color:var(--accent); }
+.masthead p.sub{ color:var(--ink-soft); font-size:14.5px; margin-top:6px; max-width:60ch; }
 
 /* --------------------------------------------------------------------------
    4. Disclaimer banner
@@ -158,13 +153,13 @@ h1,h2,h3{
 .input-combo:focus-within{ outline:2px solid var(--focus); outline-offset:1px; }
 .input-combo input{
   border:none; background:transparent; padding:10px 12px; font-size:16px; width:100%;
-  font-family:"IBM Plex Mono", monospace; color:var(--ink); min-width:0;
+  font-family:"Public Sans", sans-serif; font-variant-numeric:tabular-nums; color:var(--ink); min-width:0;
 }
 .input-combo input:focus{ outline:none; }
 .seg{ display:flex; border-left:1px solid var(--border); }
 .seg button{
   border:none; background:var(--surface-2); color:var(--ink-soft); font-size:12.5px; font-weight:600;
-  padding:0 12px; cursor:pointer; font-family:"IBM Plex Sans", sans-serif;
+  padding:0 12px; cursor:pointer; font-family:"Public Sans", sans-serif;
 }
 .seg button.active{ background:var(--accent); color:var(--accent-ink); }
 .age-fields{ display:flex; gap:10px; }
@@ -174,7 +169,7 @@ h1,h2,h3{
   margin-top:16px; padding-top:14px; border-top:1px dashed var(--border-soft);
   font-size:13px; color:var(--ink-soft); display:flex; gap:18px; flex-wrap:wrap;
 }
-.derived b{ color:var(--ink); font-family:"IBM Plex Mono", monospace; }
+.derived b{ color:var(--ink); font-family:"Public Sans", sans-serif; font-variant-numeric:tabular-nums; font-weight:600; }
 .adult-flag{
   margin-top:12px; background:var(--amber-soft); border:1px solid color-mix(in srgb, var(--amber) 30%, var(--border));
   color:var(--ink); padding:9px 12px; border-radius:8px; font-size:13px; display:none;
@@ -186,16 +181,19 @@ h1,h2,h3{
   margin-top:14px; background:var(--accent-soft); border:1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
   color:var(--ink); padding:10px 12px; border-radius:8px; font-size:13px;
 }
+.optional-tag{
+  text-transform:none; font-weight:400; letter-spacing:0; color:var(--ink-soft); font-size:11.5px;
+}
 
 /* --------------------------------------------------------------------------
-   6. "Jump to what you need" picker
+   6. "See what you need" picker
    -------------------------------------------------------------------------- */
 .filter-panel{ padding:18px 22px; }
 .filter-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px; }
 .filter-head h2{ font-size:17px; }
 .filter-reset{
   border:none; background:none; color:var(--accent); font-weight:600; font-size:13px;
-  cursor:pointer; padding:2px 4px; font-family:"IBM Plex Sans",sans-serif;
+  cursor:pointer; padding:2px 4px; font-family:"Public Sans",sans-serif;
 }
 .filter-reset:hover{ text-decoration:underline; }
 .filter-group{ margin-bottom:12px; }
@@ -208,13 +206,25 @@ h1,h2,h3{
 .chip{
   border:1px solid var(--border); background:var(--surface); color:var(--ink-soft);
   padding:6px 12px; border-radius:100px; font-size:12.5px; cursor:pointer; font-weight:500;
-  font-family:"IBM Plex Sans",sans-serif; transition:background .1s,border-color .1s,color .1s;
+  font-family:"Public Sans",sans-serif; transition:background .1s,border-color .1s,color .1s;
 }
 .chip:hover{ border-color:var(--accent); color:var(--ink); }
-.chip.pinned{
+.chip.selected{
   background:var(--accent-soft); border-color:var(--accent); color:var(--ink); font-weight:600;
 }
-.chip.pinned::before{ content:"📌 "; font-size:10px; }
+.chip.selected::before{ content:"✓ "; }
+
+/* "Your selection" box */
+.selection-box{
+  background:var(--surface); border:1px solid var(--accent); border-radius:14px;
+  padding:20px; box-shadow:var(--shadow); margin-bottom:34px;
+}
+.selection-box-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px; }
+.selection-box-head h2{ font-size:17px; }
+.selection-box .hint{ color:var(--ink-soft); font-size:13px; margin-bottom:16px; }
+.selection-empty{
+  color:var(--ink-soft); font-size:13.5px; padding:6px 0;
+}
 
 /* --------------------------------------------------------------------------
    7. Section headers
@@ -222,7 +232,7 @@ h1,h2,h3{
 .section-title{
   display:flex; align-items:baseline; gap:10px; margin:34px 0 14px;
 }
-.section-title h2{ font-size:15px; text-transform:uppercase; letter-spacing:.08em; font-family:"IBM Plex Sans",sans-serif; color:var(--ink-soft); }
+.section-title h2{ font-size:15px; text-transform:uppercase; letter-spacing:.08em; font-family:"Public Sans",sans-serif; color:var(--ink-soft); }
 .section-title .rule{ flex:1; height:1px; background:var(--border); }
 
 /* --------------------------------------------------------------------------
@@ -255,7 +265,7 @@ h1,h2,h3{
 }
 .regimen-head.low{ background:var(--accent-soft); color:var(--accent); }
 .regimen-head.high{ background:var(--amber-soft); color:var(--amber); }
-.regimen-head .mgkg{ font-family:"IBM Plex Mono",monospace; font-weight:500; opacity:.85; }
+.regimen-head .mgkg{ font-family:"Public Sans",sans-serif; font-variant-numeric:tabular-nums; font-weight:500; opacity:.85; }
 .max-badge{
   display:inline-block; margin-left:6px; padding:1px 7px; border-radius:100px;
   background:rgba(0,0,0,0.08); font-weight:700; font-size:11px; letter-spacing:.01em;
@@ -267,8 +277,8 @@ h1,h2,h3{
   padding:8px 12px; font-size:13.5px; border-top:1px solid var(--border-soft);
 }
 .dose-line .freq{ color:var(--ink-soft); min-width:64px; }
-.dose-line .amt{ font-family:"IBM Plex Mono",monospace; font-weight:600; text-align:right; }
-.dose-line .amt small{ font-weight:400; color:var(--ink-soft); font-family:"IBM Plex Sans",sans-serif; }
+.dose-line .amt{ font-family:"Public Sans",sans-serif; font-variant-numeric:tabular-nums; font-weight:600; text-align:right; }
+.dose-line .amt small{ font-weight:400; color:var(--ink-soft); font-family:"Public Sans",sans-serif; }
 .dose-line.capped .amt{ color:var(--danger); }
 .cap-note{ font-size:11.5px; color:var(--danger); padding:0 12px 8px; margin-top:-4px; }
 
@@ -276,7 +286,7 @@ h1,h2,h3{
   display:flex; flex-wrap:wrap; gap:6px; font-size:11.5px; color:var(--ink-soft); padding-top:2px;
 }
 .conc-pill{
-  border:1px solid var(--border); border-radius:100px; padding:3px 9px; font-family:"IBM Plex Mono",monospace;
+  border:1px solid var(--border); border-radius:100px; padding:3px 9px; font-family:"Public Sans",sans-serif; font-variant-numeric:tabular-nums;
 }
 .card .note{ font-size:12px; color:var(--ink-soft); border-top:1px dashed var(--border-soft); padding-top:10px; }
 .card .adult-line{ font-size:12.5px; background:var(--surface-2); border-radius:8px; padding:8px 10px; color:var(--ink-soft); }

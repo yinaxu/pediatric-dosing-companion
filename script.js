@@ -1,18 +1,6 @@
-/* Pediatric Dosing Companion — calculator logic */
+/* Pediatric Dosing Companion. Calculator logic. */
 (function(){
   "use strict";
-
-  // ---------- theme toggle ----------
-  const themeBtn = document.getElementById('themeToggle');
-  const themeOrder = ['system','light','dark'];
-  let themeIdx = 0;
-  themeBtn.addEventListener('click', () => {
-    themeIdx = (themeIdx + 1) % themeOrder.length;
-    const t = themeOrder[themeIdx];
-    if (t === 'system') document.documentElement.removeAttribute('data-theme');
-    else document.documentElement.setAttribute('data-theme', t);
-    themeBtn.textContent = 'Theme: ' + t[0].toUpperCase() + t.slice(1);
-  });
 
   // ---------- unit toggle ----------
   let weightUnit = 'kg';
@@ -68,7 +56,7 @@
       note:'High-dose regimen (80–90 mg/kg/day) is preferred for acute otitis media and sinusitis in areas with resistant S. pneumoniae; dose BID only.'
     },
     {
-      id:'augmentin', name:'Augmentin', generic:'amoxicillin/clavulanate — dosed on amoxicillin component',
+      id:'augmentin', name:'Augmentin', generic:'amoxicillin/clavulanate, dosed on the amoxicillin component',
       concentrations:[
         {label:'125 mg/5 mL (4:1)', mg:125, freqHint:'pairs with TID'},
         {label:'200 mg/5 mL (7:1)', mg:200, freqHint:'pairs with BID'},
@@ -79,7 +67,7 @@
       customConc:true,
       regimens:[
         { tier:'low', label:'Standard dose', mgKgDayLow:25, mgKgDayHigh:45, freqOptions:[2,3], maxDosePerDose:875, maxDosePerDay:1750 },
-        { tier:'high', label:'High dose — use ES-600 (14:1)', mgKgDayLow:80, mgKgDayHigh:90, freqOptions:[2], maxDosePerDose:1000, maxDosePerDay:2000, requiresConc:600 },
+        { tier:'high', label:'High dose (use ES-600, 14:1)', mgKgDayLow:80, mgKgDayHigh:90, freqOptions:[2], maxDosePerDose:1000, maxDosePerDay:2000, requiresConc:600 },
       ],
       adult:'500/125 mg TID, 875/125 mg BID, or 250/125 mg TID',
       note:'Prefer higher amoxicillin:clavulanate ratios (7:1, 14:1) at higher doses to limit clavulanate-related GI upset (target ≤10 mg/kg/day clavulanate).'
@@ -111,7 +99,7 @@
         { tier:'low', label:'Standard dose', mgKgDayLow:14, mgKgDayHigh:14, freqOptions:[1,2], maxDosePerDose:600, maxDosePerDay:600 },
       ],
       adult:'300 mg BID or 600 mg once daily',
-      note:'Once-daily dosing supports adherence and is a common alternative for penicillin-allergic patients (cross-reactivity with penicillins is low). Iron and antacids reduce absorption — space by 2 hours.'
+      note:'Once-daily dosing supports adherence and is a common alternative for penicillin-allergic patients (cross-reactivity with penicillins is low). Iron and antacids reduce absorption, so space doses by 2 hours.'
     },
     {
       id:'cefixime', name:'Cefixime', generic:'cefixime',
@@ -130,10 +118,10 @@
         { tier:'high', label:'Severe infections (e.g., MRSA SSTI)', mgKgDayLow:20, mgKgDayHigh:40, freqOptions:[3,4], maxDosePerDose:450, maxDosePerDay:1800 },
       ],
       adult:'150–450 mg q6–8h, max 1.8 g/day',
-      note:'Notoriously bitter — give with a strongly flavored food/drink right before dosing. Reserve the higher end for confirmed or suspected MRSA skin/soft-tissue infections; not a first-line agent for routine indications.'
+      note:'The taste is famously bitter, so give it with a strongly flavored food or drink right before dosing. Reserve the higher end for confirmed or suspected MRSA skin and soft-tissue infections. This isn\'t a first-line agent for routine indications.'
     },
     {
-      id:'tmpsmx', name:'Trimethoprim-Sulfamethoxazole', generic:'TMP-SMX (Bactrim, Septra) — dosed on trimethoprim component',
+      id:'tmpsmx', name:'Trimethoprim-Sulfamethoxazole', generic:'TMP-SMX (Bactrim, Septra), dosed on the trimethoprim component',
       concentrations:[{label:'40 mg TMP/5 mL (200 mg SMX/5 mL)', mg:40}],
       customConc:true,
       regimens:[
@@ -171,7 +159,7 @@
         { tier:'low', label:'Low end', mgKgDoseLow:5, mgKgDoseHigh:5, every:'q6–8h', maxDosePerDose:400, maxDosePerDay:40, perKgDay:false },
         { tier:'high', label:'High end', mgKgDoseLow:10, mgKgDoseHigh:10, every:'q6–8h', maxDosePerDose:400, maxDosePerDay:40, perKgDay:false },
       ],
-      adult:'200–400 mg q6–8h, max 1200 mg/24h (OTC) — up to 3200 mg/24h under prescriber guidance',
+      adult:'200–400 mg q6–8h, max 1200 mg/24h over the counter, or up to 3200 mg/24h under prescriber guidance',
       note:'Only for infants ≥6 months. Max 40 mg/kg/24h, not to exceed 1200 mg/24h OTC. Take with food if GI upset occurs.'
     },
   ];
@@ -378,10 +366,12 @@
       +'</div>';
   }
 
-  // ---------- pin-to-top picker ----------
+  // ---------- "See what you need" picker ----------
+  // Selecting a medication pulls it into its own box up top. Everything
+  // else stays listed further down the page, nothing is ever hidden.
   const ABX_IDS = ANTIBIOTICS.map(d => ({id:d.id, name:d.name})).concat([{id:AZITHRO.id, name:AZITHRO.name}]);
   const OTC_IDS = OTC_WEIGHT.map(d => ({id:d.id, name:d.name})).concat(OTC_AGE.map(d => ({id:d.id, name:d.name})));
-  let pinnedAgents = new Set();
+  let selectedAgents = new Set();
 
   function buildFilterChips(){
     const chipRowAbx = document.getElementById('chipRowAbx');
@@ -393,7 +383,7 @@
       c.textContent = item.name;
       c.dataset.id = item.id;
       c.addEventListener('click', () => {
-        if (pinnedAgents.has(item.id)) pinnedAgents.delete(item.id); else pinnedAgents.add(item.id);
+        if (selectedAgents.has(item.id)) selectedAgents.delete(item.id); else selectedAgents.add(item.id);
         syncChips();
         render();
       });
@@ -405,22 +395,18 @@
   }
   function syncChips(){
     document.querySelectorAll('#chipRowAbx .chip, #chipRowOtc .chip').forEach(c => {
-      c.classList.toggle('pinned', pinnedAgents.has(c.dataset.id));
+      c.classList.toggle('selected', selectedAgents.has(c.dataset.id));
     });
   }
   document.getElementById('filterReset').addEventListener('click', () => {
-    pinnedAgents = new Set();
+    selectedAgents = new Set();
     syncChips();
     render();
   });
   buildFilterChips();
 
-  // stable partition: pinned items first (in their original relative order), then the rest
-  function byPinnedFirst(list, idFn){
-    const pinned = list.filter(x => pinnedAgents.has(idFn(x)));
-    const rest = list.filter(x => !pinnedAgents.has(idFn(x)));
-    return pinned.concat(rest);
-  }
+  const selectionBox = document.getElementById('selectionBox');
+  const selectionGrid = document.getElementById('selectionGrid');
 
   function render(){
     const weightKg = getWeightKg();
@@ -443,17 +429,26 @@
     const isAdultRange = (weightKg != null && weightKg >= 40) || (ageM != null && ageM >= 144);
     adultFlag.style.display = isAdultRange ? 'flex' : 'none';
 
-    function markPinned(html, id){
-      return pinnedAgents.has(id) ? html.replace('class="card"', 'class="card pinned-card"') : html;
+    const abxAll = ANTIBIOTICS.map(d => ({ id:d.id, html: renderAntibiotic(d, weightKg) }))
+      .concat([{ id:AZITHRO.id, html: renderAzithro(weightKg) }]);
+    const otcAll = OTC_WEIGHT.map(d => ({ id:d.id, html: renderOtcWeight(d, weightKg) }))
+      .concat(OTC_AGE.map(d => ({ id:d.id, html: renderOtcAge(d, ageM) })));
+
+    const selectedItems = abxAll.concat(otcAll).filter(x => selectedAgents.has(x.id));
+    const remainingAbx = abxAll.filter(x => !selectedAgents.has(x.id));
+    const remainingOtc = otcAll.filter(x => !selectedAgents.has(x.id));
+
+    selectionBox.hidden = selectedItems.length === 0;
+    if (selectedItems.length){
+      selectionGrid.innerHTML = selectedItems.map(x => x.html).join('');
     }
 
-    const abxItems = ANTIBIOTICS.map(d => ({ id:d.id, html: markPinned(renderAntibiotic(d, weightKg), d.id) }))
-      .concat([{ id:AZITHRO.id, html: markPinned(renderAzithro(weightKg), AZITHRO.id) }]);
-    abxGrid.innerHTML = byPinnedFirst(abxItems, x => x.id).map(x => x.html).join('');
-
-    const otcItems = OTC_WEIGHT.map(d => ({ id:d.id, html: markPinned(renderOtcWeight(d, weightKg), d.id) }))
-      .concat(OTC_AGE.map(d => ({ id:d.id, html: markPinned(renderOtcAge(d, ageM), d.id) })));
-    otcGrid.innerHTML = byPinnedFirst(otcItems, x => x.id).map(x => x.html).join('');
+    abxGrid.innerHTML = remainingAbx.length
+      ? remainingAbx.map(x => x.html).join('')
+      : '<p class="selection-empty">Every antibiotic is in your selection above.</p>';
+    otcGrid.innerHTML = remainingOtc.length
+      ? remainingOtc.map(x => x.html).join('')
+      : '<p class="selection-empty">Every OTC medication is in your selection above.</p>';
   }
 
   render();

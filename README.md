@@ -1,6 +1,6 @@
 # Pediatric Dosing Companion
 
-A dosing reference for the antibiotics and OTC medications kids get prescribed most often. Enter a weight and age, and it shows you a safe dose in seconds instead of doing the math by hand.
+A dosing reference for the antibiotics and OTC medications kids get prescribed most often. Enter a weight, and it shows you a safe dose in seconds instead of doing the math by hand. Age is optional.
 
 ## Why this exists
 
@@ -8,7 +8,7 @@ Pediatric dosing is weight-based, so every patient needs their own calculation. 
 
 ## What it does
 
-Type in a child's weight and age once, and the page updates to show:
+Type in a child's weight, and optionally their age, and the page updates to show:
 
 - A low and high dosing option for each medication, so you can see the typical range rather than a single number
 - The actual liquid volume in milliliters, based on the real concentrations these medications come in
@@ -24,9 +24,9 @@ Type in a child's weight and age once, and the page updates to show:
 
 ## How to use it
 
-1. Enter the child's weight (in pounds or kilograms) and age.
+1. Enter the child's weight in pounds or kilograms. Age is optional and only needed for the two antihistamines.
 2. The page updates automatically, so you don't have to click through separate screens for each medication.
-3. Pin the medication or two you're focused on right now if you want them at the top of the list.
+3. Select the medication or two you're working with right now, and they'll gather in their own box at the top. Everything else stays listed further down the page.
 4. Check the low and high dose, the matching liquid volume, and the maximum dose warning if one shows up.
 
 ## A note on safety
