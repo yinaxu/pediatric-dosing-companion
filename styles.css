@@ -1,0 +1,298 @@
+/* ==========================================================================
+   Pediatric Dosing Companion — Style Guide
+   A standalone stylesheet for the dosing calculator. Organized as:
+     1. Design tokens (light / dark)
+     2. Base & typography
+     3. Header
+     4. Disclaimer banner
+     5. Patient input panel
+     6. "Jump to what you need" picker
+     7. Section headers
+     8. Drug cards
+     9. Footer
+    10. Print
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Design tokens
+   Light palette lives on bare :root. Dark values are redefined twice: once
+   for the OS-level "system" preference, once for an explicit [data-theme]
+   toggle — so an explicit choice always wins over the OS setting.
+   -------------------------------------------------------------------------- */
+:root{
+  --bg:#F7F4EC;
+  --surface:#FFFFFF;
+  --surface-2:#F1ECDD;
+  --ink:#1B211D;
+  --ink-soft:#5B665C;
+  --border:#DDD5BF;
+  --border-soft:#E9E3D2;
+  --accent:#0F6E5E;
+  --accent-ink:#FFFFFF;
+  --accent-soft:#DCEEE8;
+  --amber:#AD6A16;
+  --amber-soft:#F3E3C6;
+  --danger:#A63E28;
+  --danger-soft:#F5DED4;
+  --focus:#0F6E5E;
+  --shadow: 0 1px 2px rgba(27,33,29,0.06), 0 6px 20px -12px rgba(27,33,29,0.18);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121613;
+    --surface:#191F1B;
+    --surface-2:#1F2621;
+    --ink:#EBE7DA;
+    --ink-soft:#9BA79C;
+    --border:#323C33;
+    --border-soft:#262E28;
+    --accent:#57C4A3;
+    --accent-ink:#0A1512;
+    --accent-soft:#1B332C;
+    --amber:#E0A44F;
+    --amber-soft:#332811;
+    --danger:#E38B71;
+    --danger-soft:#33201A;
+    --focus:#57C4A3;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 30px -14px rgba(0,0,0,0.6);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121613;
+  --surface:#191F1B;
+  --surface-2:#1F2621;
+  --ink:#EBE7DA;
+  --ink-soft:#9BA79C;
+  --border:#323C33;
+  --border-soft:#262E28;
+  --accent:#57C4A3;
+  --accent-ink:#0A1512;
+  --accent-soft:#1B332C;
+  --amber:#E0A44F;
+  --amber-soft:#332811;
+  --danger:#E38B71;
+  --danger-soft:#33201A;
+  --focus:#57C4A3;
+  --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 30px -14px rgba(0,0,0,0.6);
+}
+
+/* --------------------------------------------------------------------------
+   2. Base & typography
+   Fraunces (serif) for headings, IBM Plex Sans for UI/body text,
+   IBM Plex Mono for anything numeric (doses, volumes, weights).
+   Load the three families via <link> tags in the HTML <head> — see index.html.
+   -------------------------------------------------------------------------- */
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  margin:0;
+}
+h1,h2,h3{
+  font-family:"Fraunces", ui-serif, Georgia, serif;
+  text-wrap:balance;
+  font-weight:600;
+  letter-spacing:-0.01em;
+  margin:0;
+  color:var(--ink);
+}
+.mono{ font-family:"IBM Plex Mono", ui-monospace, monospace; font-variant-numeric:tabular-nums; }
+.wrap{ max-width:960px; margin:0 auto; padding:32px 20px 80px; }
+
+/* --------------------------------------------------------------------------
+   3. Header
+   -------------------------------------------------------------------------- */
+.masthead{
+  display:flex; align-items:flex-start; justify-content:space-between; gap:24px;
+  padding-bottom:22px; margin-bottom:26px; border-bottom:1px solid var(--border);
+}
+.masthead .eyebrow{
+  font-size:12px; letter-spacing:.09em; text-transform:uppercase; color:var(--accent);
+  font-weight:600; margin-bottom:6px; display:flex; align-items:center; gap:8px;
+}
+.rx-mark{
+  width:20px; height:20px; border-radius:5px; background:var(--accent);
+  display:inline-flex; align-items:center; justify-content:center;
+  color:var(--accent-ink); font-family:"Fraunces",serif; font-weight:700; font-size:13px;
+  flex:none;
+}
+.masthead h1{ font-size:clamp(26px,4vw,34px); }
+.masthead p.sub{ color:var(--ink-soft); font-size:14.5px; margin-top:6px; max-width:52ch; }
+.theme-toggle{
+  border:1px solid var(--border); background:var(--surface); color:var(--ink-soft);
+  border-radius:8px; padding:7px 11px; font-size:12.5px; cursor:pointer; white-space:nowrap;
+  font-family:"IBM Plex Sans", sans-serif;
+}
+.theme-toggle:hover{ color:var(--ink); border-color:var(--accent); }
+
+/* --------------------------------------------------------------------------
+   4. Disclaimer banner
+   -------------------------------------------------------------------------- */
+.disclaimer{
+  background:var(--danger-soft); border:1px solid color-mix(in srgb, var(--danger) 35%, var(--border));
+  border-radius:10px; padding:14px 16px; font-size:13.5px; color:var(--ink); margin-top:36px;
+  display:flex; gap:11px;
+}
+.disclaimer strong{ color:var(--danger); }
+.disclaimer svg{ flex:none; margin-top:2px; }
+
+/* --------------------------------------------------------------------------
+   5. Patient input panel
+   -------------------------------------------------------------------------- */
+.panel{
+  background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  padding:22px; box-shadow:var(--shadow); margin-bottom:30px;
+}
+.panel h2{ font-size:19px; margin-bottom:4px; }
+.panel .hint{ color:var(--ink-soft); font-size:13px; margin-bottom:18px; }
+.field-row{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+@media (max-width:560px){ .field-row{ grid-template-columns:1fr; } }
+.field label{
+  display:block; font-size:12px; font-weight:600; letter-spacing:.03em; text-transform:uppercase;
+  color:var(--ink-soft); margin-bottom:7px;
+}
+.input-combo{ display:flex; border:1px solid var(--border); border-radius:9px; overflow:hidden; background:var(--surface); }
+.input-combo:focus-within{ outline:2px solid var(--focus); outline-offset:1px; }
+.input-combo input{
+  border:none; background:transparent; padding:10px 12px; font-size:16px; width:100%;
+  font-family:"IBM Plex Mono", monospace; color:var(--ink); min-width:0;
+}
+.input-combo input:focus{ outline:none; }
+.seg{ display:flex; border-left:1px solid var(--border); }
+.seg button{
+  border:none; background:var(--surface-2); color:var(--ink-soft); font-size:12.5px; font-weight:600;
+  padding:0 12px; cursor:pointer; font-family:"IBM Plex Sans", sans-serif;
+}
+.seg button.active{ background:var(--accent); color:var(--accent-ink); }
+.age-fields{ display:flex; gap:10px; }
+.age-fields .input-combo{ flex:1; }
+.age-fields .input-combo span{ padding:10px 10px; font-size:12.5px; color:var(--ink-soft); border-left:1px solid var(--border); display:flex;align-items:center; background:var(--surface-2); }
+.derived{
+  margin-top:16px; padding-top:14px; border-top:1px dashed var(--border-soft);
+  font-size:13px; color:var(--ink-soft); display:flex; gap:18px; flex-wrap:wrap;
+}
+.derived b{ color:var(--ink); font-family:"IBM Plex Mono", monospace; }
+.adult-flag{
+  margin-top:12px; background:var(--amber-soft); border:1px solid color-mix(in srgb, var(--amber) 30%, var(--border));
+  color:var(--ink); padding:9px 12px; border-radius:8px; font-size:13px; display:none;
+}
+.example-hint{
+  margin-top:12px; font-size:12.5px; color:var(--ink-soft); font-style:italic;
+}
+.obesity-note{
+  margin-top:14px; background:var(--accent-soft); border:1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
+  color:var(--ink); padding:10px 12px; border-radius:8px; font-size:13px;
+}
+
+/* --------------------------------------------------------------------------
+   6. "Jump to what you need" picker
+   -------------------------------------------------------------------------- */
+.filter-panel{ padding:18px 22px; }
+.filter-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:14px; }
+.filter-head h2{ font-size:17px; }
+.filter-reset{
+  border:none; background:none; color:var(--accent); font-weight:600; font-size:13px;
+  cursor:pointer; padding:2px 4px; font-family:"IBM Plex Sans",sans-serif;
+}
+.filter-reset:hover{ text-decoration:underline; }
+.filter-group{ margin-bottom:12px; }
+.filter-group:last-child{ margin-bottom:0; }
+.filter-label{
+  font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--ink-soft); margin-bottom:8px;
+}
+.chiprow{ display:flex; flex-wrap:wrap; gap:7px; }
+.chip{
+  border:1px solid var(--border); background:var(--surface); color:var(--ink-soft);
+  padding:6px 12px; border-radius:100px; font-size:12.5px; cursor:pointer; font-weight:500;
+  font-family:"IBM Plex Sans",sans-serif; transition:background .1s,border-color .1s,color .1s;
+}
+.chip:hover{ border-color:var(--accent); color:var(--ink); }
+.chip.pinned{
+  background:var(--accent-soft); border-color:var(--accent); color:var(--ink); font-weight:600;
+}
+.chip.pinned::before{ content:"📌 "; font-size:10px; }
+
+/* --------------------------------------------------------------------------
+   7. Section headers
+   -------------------------------------------------------------------------- */
+.section-title{
+  display:flex; align-items:baseline; gap:10px; margin:34px 0 14px;
+}
+.section-title h2{ font-size:15px; text-transform:uppercase; letter-spacing:.08em; font-family:"IBM Plex Sans",sans-serif; color:var(--ink-soft); }
+.section-title .rule{ flex:1; height:1px; background:var(--border); }
+
+/* --------------------------------------------------------------------------
+   8. Drug cards
+   -------------------------------------------------------------------------- */
+.grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media (max-width:720px){ .grid{ grid-template-columns:1fr; } }
+
+.card{
+  background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  padding:18px 18px 16px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:12px;
+}
+.card.pinned-card{
+  border-color:var(--accent); box-shadow:0 0 0 2px var(--accent-soft), var(--shadow);
+}
+.card-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+.card-head h3{ font-size:18px; }
+.card-head .generic{ font-size:12px; color:var(--ink-soft); margin-top:2px; }
+.class-tag{
+  font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; font-weight:700;
+  padding:4px 8px; border-radius:6px; white-space:nowrap; flex:none;
+}
+.class-tag.abx{ background:var(--accent-soft); color:var(--accent); }
+.class-tag.otc{ background:var(--amber-soft); color:var(--amber); }
+
+.regimen{ border:1px solid var(--border-soft); border-radius:10px; overflow:hidden; }
+.regimen-head{
+  display:flex; justify-content:space-between; align-items:center; gap:8px;
+  padding:8px 12px; font-size:12.5px; font-weight:600; letter-spacing:.02em;
+}
+.regimen-head.low{ background:var(--accent-soft); color:var(--accent); }
+.regimen-head.high{ background:var(--amber-soft); color:var(--amber); }
+.regimen-head .mgkg{ font-family:"IBM Plex Mono",monospace; font-weight:500; opacity:.85; }
+.max-badge{
+  display:inline-block; margin-left:6px; padding:1px 7px; border-radius:100px;
+  background:rgba(0,0,0,0.08); font-weight:700; font-size:11px; letter-spacing:.01em;
+}
+:root:not([data-theme="light"]) .max-badge{ background:rgba(255,255,255,0.12); }
+:root[data-theme="dark"] .max-badge{ background:rgba(255,255,255,0.12); }
+.dose-line{
+  display:flex; justify-content:space-between; align-items:center; gap:10px;
+  padding:8px 12px; font-size:13.5px; border-top:1px solid var(--border-soft);
+}
+.dose-line .freq{ color:var(--ink-soft); min-width:64px; }
+.dose-line .amt{ font-family:"IBM Plex Mono",monospace; font-weight:600; text-align:right; }
+.dose-line .amt small{ font-weight:400; color:var(--ink-soft); font-family:"IBM Plex Sans",sans-serif; }
+.dose-line.capped .amt{ color:var(--danger); }
+.cap-note{ font-size:11.5px; color:var(--danger); padding:0 12px 8px; margin-top:-4px; }
+
+.conc-row{
+  display:flex; flex-wrap:wrap; gap:6px; font-size:11.5px; color:var(--ink-soft); padding-top:2px;
+}
+.conc-pill{
+  border:1px solid var(--border); border-radius:100px; padding:3px 9px; font-family:"IBM Plex Mono",monospace;
+}
+.card .note{ font-size:12px; color:var(--ink-soft); border-top:1px dashed var(--border-soft); padding-top:10px; }
+.card .adult-line{ font-size:12.5px; background:var(--surface-2); border-radius:8px; padding:8px 10px; color:var(--ink-soft); }
+.card .adult-line b{ color:var(--ink); }
+
+/* --------------------------------------------------------------------------
+   9. Footer
+   -------------------------------------------------------------------------- */
+footer{ margin-top:44px; padding-top:18px; border-top:1px solid var(--border); font-size:12px; color:var(--ink-soft); }
+footer p{ margin:4px 0; }
+
+/* --------------------------------------------------------------------------
+   10. Print
+   -------------------------------------------------------------------------- */
+@media print{
+  .theme-toggle, .chiprow{ display:none; }
+  body{ background:#fff; }
+  .card{ break-inside:avoid; box-shadow:none; }
+}
