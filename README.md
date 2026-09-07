@@ -1,6 +1,8 @@
 # Pediatric Dosing Companion
 
-A dosing reference for the antibiotics and OTC medications kids get prescribed most often. Enter a weight, and it shows you a safe dose in seconds instead of doing the math by hand. Age is optional.
+[![Try it now](https://img.shields.io/badge/Try%20it%20now-Live%20Demo-0F6E5E?style=for-the-badge)](https://yinaxu.github.io/pediatric-dosing-companion/)
+
+A dosing reference for the antibiotics and OTC medications kids get prescribed most often. Enter a weight, and it shows you a safe dose in seconds instead of doing the math by hand. Age is optional. 
 
 ## Why this exists
 
